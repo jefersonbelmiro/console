@@ -1,0 +1,151 @@
+/**
+ * --------------------------------------------
+ * Configuracoes
+ * --------------------------------------------
+ */
+{
+
+  /** 
+   * --------------------------------------------------------
+   * Tags                                                    
+   * --------------------------------------------------------
+   * configuracoes das tags
+   */ 
+  "tag" : { 
+
+    /**
+     * Projetos obrigados usar tag na mensagem de commit
+     * @var Array
+     */
+    "tag_mensagem" : ["dbportal_prj"],
+
+    /**
+     * Projetos obrigados taggear arquivo
+     * @var Array
+     */
+    "tag_arquivo" : ["dbportal_prj"],
+
+    /**
+     * Preixo da tag por projeto
+     * @var Object
+     */
+    "prefixo" : {
+      "dbportal_prj" : "T"
+    }, 
+                                                             
+    /**
+     * tag padrao para usar em todos os commits 
+     *
+     * @var integer | string
+     */
+    "release" : null,
+
+    /**                                                      
+     * Tags do sprint atual, usada no comentario do commit
+     *
+     * @var array | objetct
+     */
+    "sprint" : [
+    ]
+                                                             
+  },
+
+  /**
+   * --------------------------------------------------------
+   * Ignorar                                                 
+   * --------------------------------------------------------
+   * Arquivos para ignorar modificações
+   *
+   * @var array
+   */
+  "ignore" : [
+  ],
+
+  /**
+   * ------------------------------------------
+   * Autenticação
+   * ------------------------------------------
+   * Usuario e senha do cvs
+   *
+   * @var string
+   */
+  "login" : "",
+  "senha" : "",
+  
+  /**
+   * -------------------------------------------
+   * Output
+   * -------------------------------------------
+   * Codificacao de saida para o terminal
+   *
+   * @var string
+   */
+  "encodeOutput" : "utf-8",
+
+  /**
+   * ------------------------------------------
+   * Binario diff
+   * ------------------------------------------
+   * marcara para executar binario para diff
+   *
+   * Variaveis que serao substituidas em execucao
+   * [arquivo_1] - arquivo com primeira versao a ser compara
+   * [arquivo_2] - arquivo com segunda versao a ser compara
+   *
+   * @var string
+   */
+  "mascaraBinarioDiff" : "/usr/bin/vim -d [arquivo_1] [arquivo_2] -c 'map <F4> :qa<CR>'",
+
+  /**
+   * ------------------------------------------
+   * Binario editor de configurações
+   * ------------------------------------------
+   * marcara para executar binario do editor
+   * de configuraçoes
+   *
+   * Variavel que sera substituida em execucao
+   * [arquivo] - arquivo de configuracoes
+   *
+   * @var string
+   */
+  "mascaraBinarioEditorConfiguracoes" : "/usr/bin/vim [arquivo] -c 'set filetype=javascript'",
+
+  /**
+   * -------------------------------------------
+   * Senha do usuario root 
+   * -------------------------------------------
+   * usado no comando pull para definir permisao dos arquivos
+   *
+   * @var string
+   */
+  "senhaRoot" : "",
+  
+  /**
+   * ----------------------------------------------
+   * Habilita a saida de erro do cvs
+   * ----------------------------------------------
+   * 
+   * @var string
+   */
+  "mostraErroCvs" : true,
+
+  /**
+   * -------------------------------------------
+   * Encode dos Arquivos
+   * -------------------------------------------
+   * Codificacao dos fontes do projeto, não use hifen -
+   *
+   * @var array | string
+   */
+  "encodeArquivo" : ["usascii", "iso88591"],
+
+  /**
+   * -------------------------------------------
+   * Extensão dos arquivos a validar sintaxe
+   * -------------------------------------------
+   *
+   * @var array | string
+   */
+  "acceptSyntax" : ["php"]
+    
+}

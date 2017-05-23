@@ -1,0 +1,22 @@
+{
+  "name": "cvsgit/php-client",
+  "description": "cvs like git",
+  "type": "cvs, git, tool",
+  "license": "WTFPL",
+  "authors": [
+    {
+      "name": "Jeferson Belmiro",
+      "email": "jeferson.belmiro@gmail.com"
+    }
+  ],
+  "require": {
+    "symfony/console": "^3.2",
+    "php": "~5.3"
+  },
+  "bin" : ["bin/cvsgit"],
+  "autoload": {
+    "psr-4": {
+      "Cvsgit\\": "src/"
+    }
+  }
+}
