@@ -1,7 +1,8 @@
 {
   "name": "cvsgit/php-client",
   "description": "cvs like git",
-  "type": "cvs, git, tool",
+  "keywords": "cvs, git, tool",
+  "type": "library",
   "license": "WTFPL",
   "authors": [
     {
