@@ -2,11 +2,14 @@
 define('APPLICATION_DIR', dirname(__DIR__) . '/');
 define('CONFIG_DIR', getenv('HOME') . '/.cvsgit/');
 
-if (!file_exists(APPLICATION_DIR . 'vendor/autoload.php')) {
-    die('Instalação não executada.' . PHP_EOL);
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+  require __DIR__ . '/../vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
+  require __DIR__ . '/../../../autoload.php';
+} else {
+  fwrite(STDERR, 'ERROR: Composer dependencies not properly set up! Run "composer install" or see README.md for more details' . PHP_EOL);
+  exit(1);
 }
-
-require_once APPLICATION_DIR . 'vendor/autoload.php';
 
 try {
 
@@ -16,7 +19,7 @@ try {
   $oCVS = new Cvsgit\CVSApplication();
 
   /**
-   * Adiciona programas 
+   * Adiciona programas
    */
   $oCVS->addCommands(array(
     new \Cvsgit\Command\HistoryCommand(),
@@ -37,7 +40,7 @@ try {
   ));
 
   /**
-   * Executa aplicacao 
+   * Executa aplicacao
    */
   $oCVS->run();
 
