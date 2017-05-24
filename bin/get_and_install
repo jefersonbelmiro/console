@@ -1,3 +1,5 @@
 #!/bin/sh
+git clone https://github.com/cvsgit/php-client
+cd php-client
 composer install
 sudo ln -f -s $(realpath bin/cvsgit) /usr/local/bin/
