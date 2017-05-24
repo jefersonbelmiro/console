@@ -5,6 +5,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Exception;
 use \Cvsgit\Model\ArquivoModel;
 use \Cvsgit\Library\Table;
@@ -680,6 +681,9 @@ class StatusCommand extends Command {
     }
 
     $sStatusOutput = ltrim($sStatusOutput, "\n");
+
+    $style = new OutputFormatterStyle('red');
+    $oOutput->getFormatter()->setStyle('error', $style);
 
     $oOutput->writeln($sStatusOutput);
   }
