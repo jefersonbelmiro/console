@@ -221,7 +221,7 @@ class PushCommand extends Command {
 
         if (!$this->checkFileExists($oCommit)) {
 
-          foreach($this->addNewDirectories($sArquivoCommit) as $sCommando) {
+          foreach($this->addNewFile($sArquivoCommit) as $sCommando) {
             $this->oOutput->writeln("   " . $sCommando);
           }
         }
@@ -265,7 +265,7 @@ class PushCommand extends Command {
 
           if (!$this->checkFileExists($oCommit)) {
 
-            foreach($this->addNewDirectories($sArquivoCommit) as $sCommando) {
+            foreach($this->addNewFile($sArquivoCommit) as $sCommando) {
 
               $oComandoAdd = $this->getApplication()->execute($sCommando);
               $aRetornoComandoAdd = $oComandoAdd->output;
@@ -370,7 +370,13 @@ class PushCommand extends Command {
     return Encode::toUTF8("cvs tag {$sComandoTag} {$iTag} " . escapeshellarg($sArquivoCommit));
   }
 
-  private function addNewDirectories($path) {
+  /**
+   * get cvs add commands for new files and directories
+   *
+   * @param string $path
+   * @return Array
+   */
+  private function addNewFile($path) {
 
     $data = array();
     $path = rtrim($path, '/');
@@ -379,16 +385,22 @@ class PushCommand extends Command {
       return $data;
     }
 
-    if (file_exists($path)) {
+    if (is_file($path)) {
       $data[] = Encode::toUTF8("cvs add " . escapeshellarg($path));
     }
     else if (!file_exists($path . '/CVS/Repository')) {
       $data[] = Encode::toUTF8("cvs add " . escapeshellarg($path));
     }
 
-    return array_merge( $this->addNewDirectories(dirname($path)), $data);
+    return array_merge($this->addNewFile(dirname($path)), $data);
   }
 
+  /**
+   * Verifica se arquivo ou diretorio existe no repositorio
+   *
+   * @param \Cvsgit\Model\Arquivo $oCommit
+   * @return Boolean
+   */
   private function checkFileExists($oCommit) {
 
     $sArquivoCommit  = $this->getApplication()->clearPath($oCommit->getArquivo());

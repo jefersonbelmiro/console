@@ -30,7 +30,7 @@ class ArquivoModel extends CvsGitModel {
     }
 
     return $aArquivos;
-  } 
+  }
 
   /**
    * Salva arquivos para commitar
@@ -47,12 +47,12 @@ class ArquivoModel extends CvsGitModel {
     $sComandosCommitar = Arquivo::COMANDO_COMMITAR_TAGGEAR . ", " . Arquivo::COMANDO_COMMITAR;
 
     /**
-     * Remove todos os arquivos daquele projeto antes de incluir 
+     * Remove todos os arquivos daquele projeto antes de incluir
      */
     $this->getDataBase()->delete('add_files', 'command in('. $sComandosCommitar .') AND project_id = ' . $this->getProjeto()->id);
 
     /**
-     * Salva no banco os arquivos com suas configurações de commit 
+     * Salva no banco os arquivos com suas configurações de commit
      */
     foreach ($aArquivos as $oArquivo) {
 
@@ -65,7 +65,7 @@ class ArquivoModel extends CvsGitModel {
         'type'        => $oArquivo->getTipo(),
         'command'     => $oArquivo->getComando(),
       ));
-    } 
+    }
 
     $this->getDataBase()->commit();
   }
@@ -93,7 +93,7 @@ class ArquivoModel extends CvsGitModel {
     }
 
       /**
-     * Salva no banco os arquivos com suas configurações de commit 
+     * Salva no banco os arquivos com suas configurações de commit
        */
     foreach ($aArquivos as $oArquivo) {
 
@@ -115,7 +115,7 @@ class ArquivoModel extends CvsGitModel {
       }
 
       $aArquivosTaggeados[] = $oArquivo->getArquivo();
-    } 
+    }
 
     $this->getDataBase()->commit();
 
@@ -148,7 +148,7 @@ class ArquivoModel extends CvsGitModel {
    * @return boolean
    */
   public function removerArquivo($sArquivo) {
-    return $this->getDataBase()->delete('add_files', "project_id = {$this->getProjeto()->id} and file = '$sArquivo'");
+    return $this->getDataBase()->delete('add_files', "project_id = {$this->getProjeto()->id} and file like '%$sArquivo'");
   }
 
   /**
@@ -164,7 +164,7 @@ class ArquivoModel extends CvsGitModel {
     $sWhere = null;
 
     /**
-     * Busca commites que contenham arquivos enviados por parametro 
+     * Busca commites que contenham arquivos enviados por parametro
      */
     if ( !empty($oParametros->aArquivos) ) {
 
@@ -183,14 +183,14 @@ class ArquivoModel extends CvsGitModel {
     }
 
     /**
-     * Busca commites com tag 
+     * Busca commites com tag
      */
     if ( !empty($oParametros->iTag) ) {
       $sWhere .= " and tag like '%$oParametros->iTag%'";
     }
 
     /**
-     * Busca commites por data 
+     * Busca commites por data
      */
     if ( !empty($oParametros->sData) ) {
 
@@ -199,7 +199,7 @@ class ArquivoModel extends CvsGitModel {
     }
 
     /**
-     * Busca commites contendo mensagem 
+     * Busca commites contendo mensagem
      */
     if ( !empty($oParametros->aMensagens) ) {
 

@@ -315,6 +315,11 @@ class StatusCommand extends Command {
       $oLinha->sTipo    = $sTipo;
       $oLinha->sArquivo = trim(implode(' ',$aLinha));
 
+      // add slash on directories
+      if (is_dir($oLinha->sArquivo)) {
+        $oLinha->sArquivo .= '/';
+      }
+
       /**
        * Arquivo está na lista dos ignorados, pula
        */
