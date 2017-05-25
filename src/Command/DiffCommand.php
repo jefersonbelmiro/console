@@ -28,7 +28,7 @@ class DiffCommand extends Command {
     $this->setDescription('Exibe diferenças entre versões do arquivo');
     $this->setHelp(
       'Exibe diferenças entre versões do arquivo' . PHP_EOL .
-      'Caso nenhuma versão for informada, compara versão local com ultima do repositorio' . PHP_EOL . 
+      'Caso nenhuma versão for informada, compara versão local com ultima do repositorio' . PHP_EOL .
       'Caso nenhum arquivo for informado, usa todos arquivos adicionados para commit'
     );
     $this->addArgument('arquivo', InputArgument::OPTIONAL, 'Arquivo para comparação');
@@ -47,6 +47,7 @@ class DiffCommand extends Command {
   public function execute($oInput, $oOutput) {
 
     $this->oInput = $oInput;
+    $this->oOutput = $oOutput;
     $sArquivo = $oInput->getArgument('arquivo');
 
     if (empty($sArquivo)) {
@@ -59,17 +60,24 @@ class DiffCommand extends Command {
   private function buscarArquivosModificados() {
 
     /**
-     * Model do comando 
+     * Model do comando
      */
     $oArquivoModel = new ArquivoModel();
 
     /**
-     * lista dos arquivos adicionados para commit 
+     * lista dos arquivos adicionados para commit
      */
-    $aArquivos = $oArquivoModel->getAdicionados(); 
+    $aArquivos = $oArquivoModel->getAdicionados();
 
     foreach ($aArquivos as $oCommit) {
-      $this->processarArquivo($this->getApplication()->clearPath($oCommit->getArquivo()));
+
+      $sArquivo = $this->getApplication()->clearPath($oCommit->getArquivo());
+
+      try {
+        $this->processarArquivo($sArquivo);
+      } catch (Exception $error) {
+        $this->getApplication()->displayError('Erro ao executar diff: '. $sArquivo, $this->oOutput);
+      }
     }
   }
 
@@ -83,7 +91,7 @@ class DiffCommand extends Command {
     $nSegundaVersao  = $this->oInput->getArgument('segunda_versao');
 
     /**
-     * Nenhuma versao informada para usar diff 
+     * Nenhuma versao informada para usar diff
      */
     if ( empty($nPrimeiraVersao) ) {
 
@@ -137,14 +145,14 @@ class DiffCommand extends Command {
     }
 
     /**
-     * Checkout - Primeira versao 
+     * Checkout - Primeira versao
      */
     $oComando = $this->getApplication()->execute(sprintf($sComandoCheckout, $nPrimeiraVersao));
     $aRetornoCheckout = $oComando->output;
     $iStatusCheckout = $oComando->code;
 
     /**
-     * Erro - Primeira versao 
+     * Erro - Primeira versao
      */
     if ( $iStatusCheckout > 0 ) {
       throw new Exception(
@@ -247,7 +255,7 @@ class DiffCommand extends Command {
     }
 
     /**
-     * Percorre os parametros e inclui arquivos para diff 
+     * Percorre os parametros e inclui arquivos para diff
      */
     foreach ($aParametrosMascara as $sParametro) {
 
@@ -258,7 +266,7 @@ class DiffCommand extends Command {
       if ( $sParametro == '[arquivo_2]' ) {
         $sParametro = $sArquivoSegundaVersao;
       }
-      
+
       $aParametrosDiff[] = $sParametro;
     }
 
@@ -268,7 +276,7 @@ class DiffCommand extends Command {
       case 0 :
         pcntl_exec($sBinario, $aParametrosDiff);
       break;
-    
+
       default :
         pcntl_waitpid($pid, $status);
       break;
