@@ -1,6 +1,8 @@
 <?php
 namespace Cvsgit\Library;
 
+use Exception;
+
 class Config {
 
   private $oConfig;

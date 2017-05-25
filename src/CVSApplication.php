@@ -139,19 +139,4 @@ class CVSApplication extends Application {
     $oOutput->writeln($sMsgErro);
   }
 
-  public function glob($pattern='*', $flags = 0, $path='', $recursive = false) {
-
-    $files = glob($path . $pattern, $flags);
-    if (!$recursive) {
-      return $files;
-    }
-
-    $paths = glob($path . '*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT|$flags);
-    foreach ($paths as $path) {
-      $files = array_merge($files, $this->glob($pattern, $flags, $path, $recursive));
-    }
-
-    return $files;
-  }
-
 }

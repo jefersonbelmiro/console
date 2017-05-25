@@ -8,8 +8,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Exception;
 use \Cvsgit\Model\ArquivoModel;
-use \Cvsgit\Library\Table;
 use \Cvsgit\Model\Arquivo;
+use \Cvsgit\Library\Table;
+use \Cvsgit\Library\Glob;
 
 /**
  * StatusCommand
@@ -263,16 +264,10 @@ class StatusCommand extends Command {
       }
     }
 
-    /**
-     * Arquivos para ignorar
-     */
-    $aArquivosIgnorar = array();
-    $aIgnorar         = $this->getApplication()->getConfig('ignore');
+    $aIgnorar = $this->getApplication()->getConfig('ignore');
 
-    /**
-     * Verifica arquivos ignorados no .csvignore do projeto
-     */
-    if ( file_exists('.cvsignore') ) {
+    // Verifica arquivos ignorados no .csvignore do projeto
+    if (file_exists('.cvsignore')) {
 
       $oArquivoCvsIgnore = new \SplFileObject('.cvsignore');
 
@@ -285,20 +280,12 @@ class StatusCommand extends Command {
       }
     }
 
-    foreach ($aIgnorar as $sIgnore) {
-
-      $sOperador = "*";
-      if (is_file($sIgnore)) {
-        $sOperador = "";
-      }
-
-      $aFiles           = $this->getApplication()->glob($sOperador, GLOB_BRACE, $sIgnore, true);
-      $aArquivosIgnorar = array_merge($aArquivosIgnorar , $aFiles);
+    // convert glob ignore to regex
+    foreach ($aIgnorar as &$sIgnore) {
+      $sIgnore = Glob::toRegex($sIgnore);
     }
 
-    /**
-     * Parse no retorno do comando cvs update
-     */
+    // Parse no retorno do comando cvs update
     foreach ($aRetornoComandoUpdate as $sLinhaUpdate) {
 
       $aLinha = explode(' ', $sLinhaUpdate);
@@ -308,7 +295,7 @@ class StatusCommand extends Command {
       /**
        * Linha não é um tipo de commit: U, ?, C...
        */
-      if ( !in_array($sTipo, array_keys($this->aTiposCommit)) ) {
+      if (!in_array($sTipo, array_keys($this->aTiposCommit))) {
         continue;
       }
 
@@ -320,11 +307,11 @@ class StatusCommand extends Command {
         $oLinha->sArquivo .= '/';
       }
 
-      /**
-       * Arquivo está na lista dos ignorados, pula
-       */
-      if ( !empty($aIgnorar) && in_array($oLinha->sArquivo, $aArquivosIgnorar) ) {
-        continue;
+      // Arquivo está na lista dos ignorados, pula
+      foreach ($aIgnorar as $regex) {
+        if (preg_match($regex, $oLinha->sArquivo)) {
+          continue 2;
+        }
       }
 
       /**
