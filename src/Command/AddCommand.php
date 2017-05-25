@@ -34,7 +34,7 @@ class AddCommand extends Command {
     $this->addOption('fixed',          'f', InputOption::VALUE_NONE, 'Tipo de commit: Correção de bug' );
     $this->addOption('style',          's', InputOption::VALUE_NONE, 'Tipo de commit: Modificações estéticas no fonte' );
     $this->addOption('force',          'F', InputOption::VALUE_NONE, 'Força o commit do fonte, ignorando encode' );
-    $this->addOption('force-syntax',   'S', InputOption::VALUE_NONE, 'Força o commit do fonte, sem verificar syntax' );    
+    $this->addOption('force-syntax',   'S', InputOption::VALUE_NONE, 'Força o commit do fonte, sem verificar syntax' );
 
     $this->setHelp('Adiciona e configura arquivos para enviar ao repositório CVS.');
   }
@@ -48,43 +48,31 @@ class AddCommand extends Command {
 
     $this->aArquivos = $this->oArquivoModel->getAdicionados();
 
-    $lExisteArquivoInvalido        = true;
-    $lExisteArquivoSintaxeInvalida = true;
-
     /**
      * Procura os arquivos para adicionar
      */
-    foreach( $this->oInput->getArgument('arquivos') as $sArquivo ) {
+    foreach($this->oInput->getArgument('arquivos') as $sArquivo) {
 
-      if ( !file_exists($sArquivo) ) {
+      if (!file_exists($sArquivo)) {
         continue;
       }
 
-      if ( is_dir($sArquivo) ) {
+      if (is_dir($sArquivo)) {
         continue;
       }
 
-      /**
-       * Valida o Encode quando existir no config
-       */
-      if($this->validaEncodeArquivos($sArquivo) === false) {
-        $lExisteArquivoInvalido = false;
+      // Valida o Encode quando existir no config
+      if (!$this->validaEncodeArquivos($sArquivo) && !$this->oInput->getOption('force')) {
+        return 1;
       }
 
-      /**
-       * Valida erros de sintaxe no arquivo
-       */
-      if($this->validaSintaxeArquivos($sArquivo) === false) {
-        $lExisteArquivoSintaxeInvalida = false;
+      // Valida erros de sintaxe no arquivo
+      if (!$this->validaSintaxeArquivos($sArquivo) && $this->oInput->getOption('force-syntax')) {
+        return 1;
       }
     }
 
-    if ($lExisteArquivoInvalido || ($lExisteArquivoInvalido === false && ((int)$this->oInput->getOption('force')))) {
-
-      if ($lExisteArquivoSintaxeInvalida || ($lExisteArquivoSintaxeInvalida === false && ((int)$this->oInput->getOption('force-syntax')))) {
-        $this->processarArquivos();
-      }
-    }
+    $this->processarArquivos();
   }
 
   public function processarArquivos() {
@@ -93,7 +81,7 @@ class AddCommand extends Command {
     $sMensagem = '<info>Arquivo %s: %s</info>';
 
     /**
-     * Procura os arquivos para adicionar 
+     * Procura os arquivos para adicionar
      */
     foreach( $this->oInput->getArgument('arquivos') as $sArquivo ) {
 
@@ -142,21 +130,21 @@ class AddCommand extends Command {
         switch ( $sArgumento ) {
 
           /**
-           * Mensagem do commit 
+           * Mensagem do commit
            */
           case 'message' :
             $oArquivo->setMensagem($this->oInput->getOption('message'));
           break;
 
           /**
-           * Tag do commit 
+           * Tag do commit
            */
           case 'tag' :
             $oArquivo->setTagMensagem($this->oInput->getOption('tag'));
           break;
 
           /**
-           * Tag do commit 
+           * Tag do commit
            */
           case 'tag-commit' :
 
@@ -175,23 +163,23 @@ class AddCommand extends Command {
           break;
 
           /**
-           * Commit para modificacoes do layout ou documentacao 
+           * Commit para modificacoes do layout ou documentacao
            */
-          case 'style' : 
+          case 'style' :
             $oArquivo->setTipo('STYLE');
           break;
 
           /**
-           * Commit para correcao de erros 
-           */ 
-          case 'fixed' : 
+           * Commit para correcao de erros
+           */
+          case 'fixed' :
             $oArquivo->setTipo('FIX');
           break;
 
           /**
-           * Commit para melhorias 
+           * Commit para melhorias
            */
-          case 'enhanced' : 
+          case 'enhanced' :
             $oArquivo->setTipo('ENH');
           break;
 
@@ -199,7 +187,7 @@ class AddCommand extends Command {
       }
 
       $iTagArquivo = $oArquivo->getTagArquivo();
-      $iTagRelease = $this->getApplication()->getConfig()->get('tag')->release; 
+      $iTagRelease = $this->getApplication()->getConfig()->get('tag')->release;
 
       if ( empty($iTagArquivo) && !empty($iTagRelease) ) {
         $oArquivo->setTagArquivo($iTagRelease);
@@ -256,13 +244,13 @@ class AddCommand extends Command {
     $sMensagemArquivoInvalido  = "<error>Erro de sintaxe no arquivo: %s</error>";
 
     if ((int)$this->getApplication()->getConfig('acceptSyntax')) {
-      
+
       $aSintaxesSuportadas         = $this->getApplication()->getConfig('acceptSyntax');
 
       if ( in_array($sExtensaoArquivo, $aSintaxesSuportadas) && (!(int)$this->oInput->getOption('force-syntax')) ) {
 
         switch ($sExtensaoArquivo) {
-    
+
           case "php":
 
               $sMensagemValidacaoSintaxe = preg_replace("/(.*)( ". preg_quote($sArquivo, '/') .")/m", "$1", exec("php -l ".$sArquivo));
