@@ -282,7 +282,7 @@ class StatusCommand extends Command {
 
     // convert glob ignore to regex
     foreach ($aIgnorar as &$sIgnore) {
-      $sIgnore = Glob::toRegex($sIgnore);
+      $sIgnore = Glob::toRegex($sIgnore, true, false);
     }
 
     // Parse no retorno do comando cvs update
